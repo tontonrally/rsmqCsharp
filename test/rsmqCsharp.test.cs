@@ -11,7 +11,8 @@ namespace RsmqCsharp.Test
     internal static class Global
     {
         public static string QueueName = "q";
-        public static string WrongQueueName = @"(&!@^$(*&$@$@#)(*!@#)(*@&$(*@";
+        public static string WrongQueueName = "wrongQ";
+        public static string WrongQueueNameFormat = @"(&!@^$(*&$@$@#)(*!@#)(*@&$(*@";
 
         public static async Task FlushDb()
         {
@@ -68,7 +69,7 @@ namespace RsmqCsharp.Test
             var rsmq = new Rsmq();
 
             Assert.Throws<MissingParameterException>(() => rsmq.CreateQueue(new CreateQueueOptions { QueueName = null }));
-            Assert.Throws<InvalidFormatException>(() => rsmq.CreateQueue(new CreateQueueOptions { QueueName = Global.WrongQueueName }));
+            Assert.Throws<InvalidFormatException>(() => rsmq.CreateQueue(new CreateQueueOptions { QueueName = Global.WrongQueueNameFormat }));
 
             var queues = rsmq.ListQueues();
             Assert.Zero(queues.Count());
@@ -80,7 +81,7 @@ namespace RsmqCsharp.Test
             var rsmq = new Rsmq();
 
             Assert.ThrowsAsync<MissingParameterException>(async () => await rsmq.CreateQueueAsync(new CreateQueueOptions { QueueName = null }));
-            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.CreateQueueAsync(new CreateQueueOptions { QueueName = Global.WrongQueueName }));
+            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.CreateQueueAsync(new CreateQueueOptions { QueueName = Global.WrongQueueNameFormat }));
 
             var queues = await rsmq.ListQueuesAsync();
             Assert.Zero(queues.Count());
@@ -172,7 +173,7 @@ namespace RsmqCsharp.Test
         public void DeleteQueueWithError()
         {
             var rsmq = new Rsmq();
-            Assert.Throws<InvalidFormatException>(() => rsmq.DeleteQueue(new DeleteQueueOptions { QueueName = Global.WrongQueueName }));
+            Assert.Throws<InvalidFormatException>(() => rsmq.DeleteQueue(new DeleteQueueOptions { QueueName = Global.WrongQueueNameFormat }));
 
         }
 
@@ -180,7 +181,7 @@ namespace RsmqCsharp.Test
         public void DeleteQueueWithErrorAsync()
         {
             var rsmq = new Rsmq();
-            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.DeleteQueueAsync(new DeleteQueueOptions { QueueName = Global.WrongQueueName }));
+            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.DeleteQueueAsync(new DeleteQueueOptions { QueueName = Global.WrongQueueNameFormat }));
         }
     }
 
@@ -251,7 +252,7 @@ namespace RsmqCsharp.Test
         {
             var rsmq = new Rsmq();
             Assert.Throws<QueueNotFoundException>(() => rsmq.GetQueueAttributes(new GetQueueAttributesOptions { QueueName = Global.QueueName }));
-            Assert.Throws<InvalidFormatException>(() => rsmq.GetQueueAttributes(new GetQueueAttributesOptions { QueueName = Global.WrongQueueName }));
+            Assert.Throws<InvalidFormatException>(() => rsmq.GetQueueAttributes(new GetQueueAttributesOptions { QueueName = Global.WrongQueueNameFormat }));
         }
 
         [Test]
@@ -259,7 +260,7 @@ namespace RsmqCsharp.Test
         {
             var rsmq = new Rsmq();
             Assert.ThrowsAsync<QueueNotFoundException>(async () => await rsmq.GetQueueAttributesAsync(new GetQueueAttributesOptions { QueueName = Global.QueueName }));
-            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.GetQueueAttributesAsync(new GetQueueAttributesOptions { QueueName = Global.WrongQueueName }));
+            Assert.ThrowsAsync<InvalidFormatException>(async () => await rsmq.GetQueueAttributesAsync(new GetQueueAttributesOptions { QueueName = Global.WrongQueueNameFormat }));
         }
     }
 
@@ -339,7 +340,7 @@ namespace RsmqCsharp.Test
 
             rsmq.CreateQueue(new CreateQueueOptions { QueueName = Global.QueueName });
 
-            Assert.Throws<QueueNotFoundException>(() => rsmq.SetQueueAttributes(new SetQueueAttributesOptions { QueueName = Global.WrongQueueName }));
+            Assert.Throws<QueueNotFoundException>(() => rsmq.SetQueueAttributes(new SetQueueAttributesOptions { QueueName = Global.WrongQueueName, MaxSize = 3000 }));
             Assert.Throws<NoAttributeSuppliedException>(() => rsmq.SetQueueAttributes(new SetQueueAttributesOptions { QueueName = Global.QueueName }));
             Assert.Throws<InvalidValueException>(() => rsmq.SetQueueAttributes(new SetQueueAttributesOptions { QueueName = Global.QueueName, MaxSize = -34 }));
         }
@@ -348,7 +349,13 @@ namespace RsmqCsharp.Test
         public async Task SetQueueAttributesWithErrorAsync()
         {
             var rsmq = new Rsmq();
+            Assert.ThrowsAsync<QueueNotFoundException>(async () => await rsmq.SetQueueAttributesAsync(new SetQueueAttributesOptions { QueueName = Global.QueueName, MaxSize = 7453 }));
+
             await rsmq.CreateQueueAsync(new CreateQueueOptions { QueueName = Global.QueueName });
+
+            Assert.ThrowsAsync<QueueNotFoundException>(async () => await rsmq.SetQueueAttributesAsync(new SetQueueAttributesOptions { QueueName = Global.WrongQueueName, MaxSize = 3000 }));
+            Assert.ThrowsAsync<NoAttributeSuppliedException>(async () => await rsmq.SetQueueAttributesAsync(new SetQueueAttributesOptions { QueueName = Global.QueueName }));
+            Assert.ThrowsAsync<InvalidValueException>(async () => await rsmq.SetQueueAttributesAsync(new SetQueueAttributesOptions { QueueName = Global.QueueName, MaxSize = -34 }));
         }
     }
 
