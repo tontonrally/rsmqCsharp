@@ -1,5 +1,7 @@
 ![RSMQ: Redis Simple Message Queue for Node.js](https://img.webmart.de/rsmq_wide.png)
 
+[![Build Status](https://travis-ci.org/tontonrally/rsmqCsharp.svg?branch=master)](https://travis-ci.org/tontonrally/rsmqCsharp)
+
 # Redis Simple Message Queue
 
 A lightweight message queue for .NET that requires no dedicated queue server. Just a Redis server.
