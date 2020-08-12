@@ -5,3 +5,5 @@ solution: rsmqCsharp.sln
 script:
   - dotnet restore
   - dotnet test
+services:
+  - redis-server
